@@ -1,0 +1,58 @@
+name: EdgeInspector MLOps CI/CD Pipeline
+
+# Trigger this robot ONLY when code is pushed to the 'main' branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # Building the Docker Image and Push to Docker Hub
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Log into Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push to Docker Hub
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          # Tags the image with your Docker username
+          tags: ${{ secrets.DOCKER_USERNAME }}/edge-inspector-api:latest
+
+  # Securely SSH into AWS EC2 and Deploy
+  deploy-to-ec2:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Remote SSH Commands on AWS
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.AWS_HOST_IP }}
+          username: ${{ secrets.AWS_USERNAME }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
+            # 1. Download the brand new image we just built
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/edge-inspector-api:latest
+            
+            # 2. Stop and delete the old API container (don't crash if it doesn't exist yet)
+            sudo docker stop edge-inspector-api || true
+            sudo docker rm edge-inspector-api || true
+            
+            # 3. Launch the new container and inject MLflow secrets dynamically!
+            # The '-d' flag runs it in 'detached' mode so it stays on forever in the background.
+            sudo docker run -d \
+              --name edge-inspector-api \
+              -p 8000:8000 \
+              -e MLFLOW_TRACKING_URI="${{ secrets.MLFLOW_TRACKING_URI }}" \
+              -e MLFLOW_TRACKING_USERNAME="${{ secrets.MLFLOW_TRACKING_USERNAME }}" \
+              -e MLFLOW_TRACKING_PASSWORD="${{ secrets.MLFLOW_TRACKING_PASSWORD }}" \
+              ${{ secrets.DOCKER_USERNAME }}/edge-inspector-api:latest

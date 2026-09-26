@@ -1,0 +1,16 @@
+# Security Credentials
+.env
+
+# Python Virtual Environments
+.venv/
+venv/
+env/
+
+# Python Cache (Compiled Bytecode)
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE and OS Files
+.vscode/
+.DS_Store
