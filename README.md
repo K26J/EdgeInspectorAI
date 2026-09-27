@@ -1,4 +1,4 @@
-```markdown
+
 # EdgeInspectorAI
 ### End-to-End Steel Defect Detection & MLOps Pipeline
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ Before trusting the model in a factory setting, we must prove why it makes decis
   <img src="assets/images/MLflow_Model_Metrics.png" width="700" alt="MLflow Tracking Metrics">
 </p>
 <p align="center">
-  <img src="assets/images/Model_Metrics_Graphs.png" width="700" alt="MLflow Training Graphs">
+  <img src="assets/images/Model_Metrics_Graphs.png" width="700" alt="MLflow Training Graphs.1">
 </p>
 
 4. **Explainable AI (XAI):** Implemented via the pytorch-grad-cam library targeting the final convolutional block (model.features[-1]). Offline diagnostic routines calculate class activation maps by dynamically evaluating feature layer gradients, generating spatial heatmaps that visually verify the actual position of the defects in red color, fading the color as the defect is getting small on surface, blue means no defect at that position.
@@ -123,4 +123,3 @@ Author: **Keshav Mahesh Joshi**
 
 ```
 
-```
