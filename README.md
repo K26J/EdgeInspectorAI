@@ -121,5 +121,8 @@ Navigate to http://localhost:8000/docs to test the API locally before pushing to
 
 Author: **Keshav Mahesh Joshi**
 
+### Live API (24/7 Production Deployment)
+Interactive Swagger UI: [https://edgeinspector-api.onrender.com/docs](https://edgeinspector-api.onrender.com/docs)
+
 ```
 
